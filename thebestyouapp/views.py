@@ -3,6 +3,7 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import UserProfile, UserLogin
+from django.contrib.auth.hashers import make_password
 
 @csrf_exempt
 def create_profile_view(request):
@@ -14,9 +15,10 @@ def create_profile_view(request):
             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
 
         # Create UserLogin object and save login information
+        hashed_password = make_password(data['password'])
         user_login = UserLogin.objects.create(
             email=data['email'],
-            password=data['password']
+            password=hashed_password
         )
 
         # Create UserProfile object and associate it with the user login
